@@ -1,0 +1,66 @@
+:root{
+    --colornav: #000000; 
+    --colorfuente: #ffffff;
+}
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html{
+    font-size: 62.5%;
+}
+main{
+    height: 620px;
+}
+.contenido{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 50%);
+    border: 1px solid black;
+    height:100%;
+    width: 100%;
+}
+.contenido div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.contenido div h1{
+    font-size: 5rem;
+}
+.contenido .botones{
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    align-items: start;
+    background-color: #243A73;
+}
+.boton-arriba{
+    padding-top: 3rem;
+    margin-top: 8rem;
+}
+.botones button{
+    border-radius: 10px;
+    border: 2px solid gray;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+
+}
+.boton-arriba button{
+    padding: 1rem;
+    width: 9rem;
+    
+}
+.boton-abajo button{
+    padding: 1rem;
+    width: 9rem;
+    margin-top: 5rem;
+}
+.botones button a{
+    text-decoration: none;
+    color: black;
+}
+.text{
+    font-size: 1.8rem;
+    text-align: center;
+    padding: 0 6rem;
+}
