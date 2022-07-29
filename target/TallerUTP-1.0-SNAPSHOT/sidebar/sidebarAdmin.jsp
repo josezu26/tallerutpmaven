@@ -48,6 +48,14 @@
                             
                         </ul>
                     </div>
+                    <div>
+                        <p>CLIENTES</p>
+                        <ul class="hojas-opciones">
+                            <li><a href="ControladorAdmin?accion=listarClientes"><i class="fas fa-plus"></i>Listar Clientes</a></li>
+                            <li><a href="registrar.jsp"><i class="fas fa-list-ul"></i>Agregar un cliente</a></li>
+                            
+                        </ul>
+                    </div>
                 </div>
             </div>
             <a href="ControladorSesion?accion=cerrarSesion" class="boton-cerrar-sesion">

@@ -15,7 +15,9 @@ import javax.servlet.http.HttpSession;
 import Modelo.*;
 import DAO.*;
 import java.util.ArrayList;
+
 import java.util.List;
+
 
 /**
  *
@@ -26,7 +28,11 @@ public class ControladorTecnico extends HttpServlet {
 
     HojaServicioDAO hojaservicioDAO = new HojaServicioDAO();
     ServicioDAO servicioDAO = new ServicioDAO();
+    EquipoDAO equipoDAO = new EquipoDAO();
     RepuestoDAO repuestoDAO = new RepuestoDAO();
+    TecnicoDAO tecnicoDAO = new TecnicoDAO();
+    UsuarioDAO usuarioDAO = new UsuarioDAO();
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -66,7 +72,7 @@ public class ControladorTecnico extends HttpServlet {
     }
     
     List<Servicio> carritoServicios = new ArrayList<>();
-    List<CarritoRepuesto> carritoRepuestos = new ArrayList<>();
+    List<Repuesto> carritoRepuestos = new ArrayList<>();
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -134,7 +140,16 @@ public class ControladorTecnico extends HttpServlet {
                 request.getRequestDispatcher("./hojaServicioTecnico/procesoServicioTecnico1.jsp").forward(request, response);
                 
                 break;
+            case "agregarServicioCarritoTaller":
+                codigoServicio = Integer.parseInt(request.getParameter("codigoServicio"));
+                servicioAgregado = servicioDAO.obtenerServicio(codigoServicio);
+                carritoServicios.add(servicioAgregado);
+                listaServicios = servicioDAO.listarServicios();
                 
+                sesion.setAttribute("listaServicios", listaServicios);
+                request.getRequestDispatcher("./hojaServicioTecnicoTaller/procesoServicioTecnicoTaller1.jsp").forward(request, response);
+            break;
+            
             case "eliminarServicioCarrito":
                 codigoServicio = Integer.parseInt(request.getParameter("codigoServicio"));
                 Servicio servicioEliminado = servicioDAO.obtenerServicio(codigoServicio);
@@ -151,6 +166,21 @@ public class ControladorTecnico extends HttpServlet {
                 request.getRequestDispatcher("./hojaServicioTecnico/procesoServicioTecnico1.jsp").forward(request, response);
                 
                 break;
+                
+            case "eliminarServicioCarritoTaller":
+                codigoServicio = Integer.parseInt(request.getParameter("codigoServicio"));
+                servicioEliminado = servicioDAO.obtenerServicio(codigoServicio);
+                for(Servicio i : carritoServicios){
+                    if(i.getCodigoServicio() == servicioEliminado.getCodigoServicio()){
+                        servicioEliminado = i;
+                    }
+                }
+                carritoServicios.remove(servicioEliminado);
+                listaServicios = servicioDAO.listarServicios();
+                sesion.setAttribute("listaServicios", listaServicios);
+                request.getRequestDispatcher("./hojaServicioTecnicoTaller/procesoServicioTecnicoTaller1.jsp");
+            break;
+            
             case "Continuar":
                 List<Repuesto>listaRepuestos = repuestoDAO.listarRepuestos();
                 codigoHojaServicio = Integer.parseInt(request.getParameter("codigoHojaServicio"));
@@ -161,24 +191,10 @@ public class ControladorTecnico extends HttpServlet {
                 
             break;
             case "agregarRepuestoCarrito":
-                CarritoRepuesto carritoRepuesto = new CarritoRepuesto();
-                String contiene = "no";
                 codigoHojaServicio = Integer.parseInt(request.getParameter("codigoHojaServicio"));
                 int codigoRepuesto = Integer.parseInt(request.getParameter("codigoRepuesto"));
                 Repuesto repuestoAgregado = repuestoDAO.obtenerRepuesto(codigoRepuesto);
-                for(CarritoRepuesto repuesto : carritoRepuestos){
-                    if(repuesto.getRepuesto().getCodigoRepuesto() == repuestoAgregado.getCodigoRepuesto()){
-                        repuesto.setCantidad(repuesto.getCantidad()+1);
-                        repuesto.getRepuesto().setPrecioRepuesto(repuesto.getRepuesto().getPrecioRepuesto() + repuestoAgregado.getPrecioRepuesto());
-                        contiene = "si";
-                    }
-                }
-                if(contiene.equals("no")){
-                    carritoRepuesto.setRepuesto(repuestoAgregado);
-                    carritoRepuesto.setCantidad(1);
-                    carritoRepuestos.add(carritoRepuesto);
-                }
-                
+                carritoRepuestos.add(repuestoAgregado);
                 listaRepuestos = repuestoDAO.listarRepuestos();
                 
                 sesion.setAttribute("listaRepuestos", listaRepuestos);
@@ -188,26 +204,16 @@ public class ControladorTecnico extends HttpServlet {
                 break;
                 
             case "eliminarRepuestoCarrito":
-                carritoRepuesto = new CarritoRepuesto();
-                contiene = "no";
                 codigoHojaServicio = Integer.parseInt(request.getParameter("codigoHojaServicio"));
                 codigoRepuesto = Integer.parseInt(request.getParameter("codigoRepuesto"));
                 Repuesto repuestoEliminado = repuestoDAO.obtenerRepuesto(codigoRepuesto);
-                for(CarritoRepuesto repuesto : carritoRepuestos){
-                    if(repuesto.getRepuesto().getCodigoRepuesto() == repuestoEliminado.getCodigoRepuesto()){
-                        if(repuesto.getCantidad()==1){
-                            carritoRepuesto = repuesto;
-                        }else if(repuesto.getCantidad()>= 2){
-                            int cantidad = repuesto.getCantidad();
-                            double precio = repuesto.getRepuesto().getPrecioRepuesto();
-                            precio = precio - repuestoEliminado.getPrecioRepuesto();
-                            cantidad--;
-                            repuesto.setCantidad(cantidad);
-                            repuesto.getRepuesto().setPrecioRepuesto(precio);
-                        }
+                for(Repuesto i : carritoRepuestos){
+                    if(i.getCodigoRepuesto() == repuestoEliminado.getCodigoRepuesto()){
+                        repuestoEliminado = i;
                     }
                 }
-                carritoRepuestos.remove(carritoRepuesto);
+                
+                carritoRepuestos.remove(repuestoEliminado);
                 listaRepuestos = repuestoDAO.listarRepuestos();
                 
                 sesion.setAttribute("codigoHojaServicio", codigoHojaServicio);
@@ -229,8 +235,8 @@ public class ControladorTecnico extends HttpServlet {
                 double precioServicios = 0;
                 hojaServicio = hojaservicioDAO.obtenerHojaServicio(codigoHojaServicio);
                 
-                for(CarritoRepuesto i : carritoRepuestos){
-                    precioRepuestos = precioRepuestos + i.getRepuesto().getPrecioRepuesto();
+                for(Repuesto i : carritoRepuestos){
+                    precioRepuestos = precioRepuestos + i.getPrecioRepuesto();
                 }
                 for(Servicio i: carritoServicios){
                     precioServicios = precioServicios + i.getPrecioServicio();
@@ -245,6 +251,109 @@ public class ControladorTecnico extends HttpServlet {
                
                 request.getRequestDispatcher("inicioTecnico.jsp").forward(request, response);
                 break;
+            case "ListarEquipos":
+                List<Equipo> listaEquipo = new ArrayList<>();
+                listaEquipo = equipoDAO.listarEquipo();
+                
+                sesion.setAttribute("listaEquipo", listaEquipo);
+                request.getRequestDispatcher("listaEquipos.jsp").forward(request, response);
+                
+            break;
+            case "ListarEquipoCliente":
+                
+                int codigoCliente = Integer.parseInt(request.getParameter("codigo"));
+                listaEquipo = equipoDAO.listarEquipoCliente(codigoCliente);
+                
+                sesion.setAttribute("listaEquipo", listaEquipo);
+                request.getRequestDispatcher("listaEquipos.jsp").forward(request, response);
+            break;
+            case "FormularioIngresoEquipo":
+                List<MarcaEquipo> listaMarca = equipoDAO.listarMarcasEquipo();
+                List<TipoEquipo> listaTipo = equipoDAO.listarTiposEquipo();
+                
+                
+                sesion.setAttribute("listaMarcas", listaMarca);
+                sesion.setAttribute("listaTipos", listaTipo);
+                request.getRequestDispatcher("agregarEquipoTecnico.jsp").forward(request, response);
+            break;
+            case "agregarEquipo":
+                int codigoMarca = Integer.parseInt(request.getParameter("codigoMarca"));
+                int codigoTipo = Integer.parseInt(request.getParameter("codigoTipo"));
+                
+                codigoCliente = Integer.parseInt(request.getParameter("codigoCliente"));
+                String descripcionEquipo = request.getParameter("descripcionEquipo");
+                
+                equipoDAO.registrarEquipo(codigoMarca, codigoTipo, codigoCliente, descripcionEquipo);
+                request.getRequestDispatcher("inicioTecnico.jsp").forward(request, response);
+                
+            break;
+            
+            
+            case "cambiarEstadoEquipo":
+                int codigoEstado = Integer.parseInt(request.getParameter("codigoEstado"));
+                int codigoEquipo = Integer.parseInt(request.getParameter("codigoEquipo"));
+                
+                if(codigoEstado == 1){
+                    int codigoEstadoNuevo = 2;
+                    equipoDAO.cambioEstado(codigoEstadoNuevo, codigoEquipo);
+                }else{
+                    if(codigoEstado == 2){
+                        int codigoEstadoNuevo = 1;
+                        equipoDAO.cambioEstado(codigoEstadoNuevo, codigoEquipo);
+                    }
+                }
+                
+                //equipoDAO.cambioEstado(codigoEstadoNuevo, codigoEquipo);
+                request.getRequestDispatcher("ControladorTecnico?accion=ListarEquipos").forward(request, response);
+            break;
+            case "SeleccionarEquipo":
+                //listaEquipo = equipoDAO.listarEquipo();
+                listaEquipo = equipoDAO.listarEquipoRegistrado();
+                
+                sesion.setAttribute("listaEquipo", listaEquipo);
+                request.getRequestDispatcher("SeleccionarEquipoTaller.jsp").forward(request, response);
+                
+            break;
+            case "seleccionarServicioTaller":
+                
+                codigoEquipo = Integer.parseInt(request.getParameter("codigoEquipo"));
+                listaServicios = servicioDAO.listarServicios();
+                carritoServicios.clear();
+                
+                sesion.setAttribute("codigoEquipo", codigoEquipo);
+                sesion.setAttribute("listaServicios", listaServicios);
+                sesion.setAttribute("carritoServicios", carritoServicios);
+                request.getRequestDispatcher("./hojaServicioTecnicoTaller/procesoServicioTecnicoTaller1.jsp").forward(request, response);   
+            break;
+            
+            case "continuar":
+                codigoEquipo = Integer.parseInt(request.getParameter("codigoEquipo"));
+                List listaTecnicos = tecnicoDAO.listarTecnicos();
+                
+                sesion.setAttribute("listaTecnicos", listaTecnicos);
+                sesion.setAttribute("carritoServicios", carritoServicios);
+                sesion.setAttribute("codigoEquipo", codigoEquipo);
+                request.getRequestDispatcher("./hojaServicioTecnicoTaller/procesoServicioTaller2.jsp").forward(request, response);
+                
+                
+            break;
+            case "ingresarSolicitud":
+                int codigoTecnico = Integer.parseInt(request.getParameter("codigoTecnico"));
+                String descripcionProblema = request.getParameter("descripcionProblema");
+                String fechaHojaServicio = request.getParameter("fechaHojaServicio");
+                String horaHojaServicio = request.getParameter("horaHojaServicio");
+                codigoEquipo = Integer.parseInt(request.getParameter("codigoEquipo"));
+                int codigoEstadoHS = 1;
+                //int codigoEstadoAtencion =2;
+                double total = 0.00;
+                
+                Equipo equipo = equipoDAO.obtenerEquipo(codigoEquipo);
+                Usuario tecnico = usuarioDAO.obtenerUsuario(codigoTecnico);
+                hojaservicioDAO.registrarHojaServicioTecnico(tecnico.getCodigoUsuario(), equipo.getCodigoEquipo(), 
+                descripcionProblema, total, fechaHojaServicio, horaHojaServicio, codigoEstadoHS, carritoServicios);
+                
+                request.getRequestDispatcher("inicioTecnico.jsp").forward(request, response);
+            break;
         }
     }
     

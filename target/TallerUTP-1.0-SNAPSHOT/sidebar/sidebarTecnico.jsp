@@ -29,7 +29,8 @@
                     <div>
                         <p>TALLER</p>
                         <ul class="hojas-opciones">
-                            <li><a href="#"><i class="fas fa-plus"></i> Nuevo ingreso</a></li>
+                            <li><a href="IngresoEquipoTecnico.jsp"><i class="fas fa-plus"></i> Nuevo ingreso cliente</a></li>
+                            <li><a href="ControladorTecnico?accion=SeleccionarEquipo"><i class="fas fa-plus"></i> Nuevo pedido taller</a></li>
                         </ul>
                     </div>
                 </div>

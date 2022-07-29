@@ -33,7 +33,11 @@ public class Persona {
         this.telefono = telefono;
         this.correo = correo;
     }
-    
+    public String obtenerNombreCompleto(){
+        
+        
+        return this.nombre + " " + this.apellidoPaterno + " " + this.apellidoMaterno;
+    }
     //Metodos Getter and Setter
 
     public int getCodigoPersona() {

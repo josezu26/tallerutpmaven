@@ -41,6 +41,7 @@ public class EquipoDAO {
     }
     
     public List listarTiposEquipo(){
+        
         List<TipoEquipo> listaTipos = new ArrayList<>();
         
         String sql = "select * from tipo_eq";
@@ -66,7 +67,7 @@ public class EquipoDAO {
     //Registrar un equipo
     public void registrarEquipo(int codigoMarcaEquipo, int codigoTipoEquipo, int codigoUsuario, String descripcionEquipo){
         
-        String sql = "insert into equipo(Cod_Marca,Cod_TipEq,Cod_Usuario,Descripcion)values(?,?,?,?) ";
+        String sql = "insert into equipo(Cod_Marca,Cod_TipEq,Cod_Usuario,Descripcion,Cod_EstadoEq)values(?,?,?,?,?) ";
         
         try{
             con = cn.getConnection(); 
@@ -76,6 +77,7 @@ public class EquipoDAO {
             ps.setInt(2, codigoTipoEquipo);
             ps.setInt(3, codigoUsuario);
             ps.setString(4, descripcionEquipo);
+            ps.setInt(5, 1);
             ps.executeUpdate();
          }catch(Exception e){
              e.printStackTrace();
@@ -121,6 +123,26 @@ public class EquipoDAO {
         }
         
         return tipoEquipo;
+    }
+    public EstadoEquipo obtenerEstadoEquipo(int codigoEstado){
+        
+        EstadoEquipo estadoEquipo = new EstadoEquipo();
+        String sql = "select * from estado_equipo where Cod_EstadoEq="+codigoEstado;
+        
+        try{
+           con = cn.getConnection();
+           ps = con.prepareStatement(sql);
+           rs = ps.executeQuery();
+           while(rs.next()){
+               estadoEquipo.setCodigoEstadoEquipo(rs.getInt("Cod_EstadoEq"));
+               estadoEquipo.setDescripcionEstadoEquipo(rs.getString("Desc_EstadoEq"));
+           }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        
+        return estadoEquipo;
+        
     }
     
     public Equipo obtenerEquipoClienteDescripcion(int codigoCliente, String descripcionEquipo){
@@ -181,6 +203,59 @@ public class EquipoDAO {
         }
         return listaEquipoCliente;
     }
+    public List listarEquipo(){
+        List<Equipo> listaEquipos = new ArrayList<>();
+        List<Integer> listaCodigos = new ArrayList<>();
+        
+        String sql = "select * from equipo";
+        
+
+        try{
+            con = cn.getConnection();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            
+            while(rs.next()){
+                listaCodigos.add(rs.getInt("Cod_Equipo"));
+            }
+            
+            for(int x : listaCodigos){
+                listaEquipos.add(this.obtenerEquipo(x));
+            }
+            
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return listaEquipos;
+    }
+    
+    public List listarEquipoRegistrado(){
+                
+        List<Equipo> listaEquipos = new ArrayList<>();
+        List<Integer> listaCodigos = new ArrayList<>();
+        
+        String sql = "select * from equipo where Cod_EstadoEq ="+2;
+        
+
+        try{
+            con = cn.getConnection();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            
+            while(rs.next()){
+                listaCodigos.add(rs.getInt("Cod_Equipo"));
+            }
+            
+            for(int x : listaCodigos){
+                listaEquipos.add(this.obtenerEquipo(x));
+            }
+            
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return listaEquipos;
+        
+    }
     
     //P.4 ACTUALIZAR EQUIPO !!!
     public void actualizarEquipo(int codigoEquipo, int marcaEquipo, int tipoEquipo, String descripcionEquipo){
@@ -224,6 +299,7 @@ public class EquipoDAO {
         int codigoMarcaEquipo = 0;
         int codigoTipoEquipo = 0;
         int codigoUsuario = 0;
+        int codigoEstado =0;
         String descripcionEquipo = "";
         
         
@@ -237,12 +313,14 @@ public class EquipoDAO {
                 codigoTipoEquipo = rs.getInt("Cod_TipEq");
                 codigoUsuario = rs.getInt("Cod_Usuario");
                 descripcionEquipo = rs.getString("Descripcion");
+                codigoEstado = rs.getInt("Cod_EstadoEq");
             }
             equipo.setCodigoEquipo(codigoEquipo);
             equipo.setMarcaEquipo(this.obtenerMarcaEquipo(codigoMarcaEquipo));
             equipo.setTipoEquipo(this.obtenerTipoEquipo(codigoTipoEquipo));
             equipo.setUsuarioEquipo(usuarioDAO.obtenerUsuario(codigoUsuario));
             equipo.setDescripcionEquipo(descripcionEquipo);
+            equipo.setEstadoEquipo(this.obtenerEstadoEquipo(codigoEstado));
             
         } catch(Exception e){
             e.printStackTrace();
@@ -250,5 +328,19 @@ public class EquipoDAO {
         
         return equipo;
     }
+    public void cambioEstado(int codigoEstadoNuevo, int codigo ){
+        
+        String sql = "UPDATE equipo SET Cod_EstadoEq = "+ codigoEstadoNuevo+" where Cod_Equipo = "+codigo;
+        try{
+            con = cn.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.executeUpdate();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    
     
 }

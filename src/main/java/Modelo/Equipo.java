@@ -8,16 +8,18 @@ public class Equipo {
     private TipoEquipo tipoEquipo;
     private Usuario usuarioEquipo;
     private String descripcionEquipo;
+    private EstadoEquipo estadoEquipo;
     
     //CONSTRUCTOR
     public Equipo(){}
     
-    public Equipo(int codigoEquipo, MarcaEquipo marcaEquipo, TipoEquipo tipoEquipo, Usuario usuarioEquipo, String descripcionEquipo) {
+    public Equipo(int codigoEquipo, MarcaEquipo marcaEquipo, TipoEquipo tipoEquipo, Usuario usuarioEquipo, String descripcionEquipo, EstadoEquipo estadoEquipo) {
         this.codigoEquipo = codigoEquipo;
         this.marcaEquipo = marcaEquipo;
         this.tipoEquipo = tipoEquipo;
         this.usuarioEquipo = usuarioEquipo;
         this.descripcionEquipo = descripcionEquipo;
+        this.estadoEquipo = estadoEquipo;
     }
     
     //METODOS GETTER AND SETTER
@@ -59,6 +61,14 @@ public class Equipo {
 
     public void setDescripcionEquipo(String descripcionEquipo) {
         this.descripcionEquipo = descripcionEquipo;
+    }
+
+    public EstadoEquipo getEstadoEquipo() {
+        return estadoEquipo;
+    }
+
+    public void setEstadoEquipo(EstadoEquipo estadoEquipo) {
+        this.estadoEquipo = estadoEquipo;
     }
     
     

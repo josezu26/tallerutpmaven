@@ -112,7 +112,7 @@ public class ControladorCliente extends HttpServlet {
                 List<Equipo> listaequipocliente = equipoDAO.listarEquipoCliente(codigoCliente);
                 
                 sesion.setAttribute("listaequipocliente", listaequipocliente);
-                request.getRequestDispatcher("./hojaServicioCliente/procesoServicio1.jsp").forward(request, response);                
+                request.getRequestDispatcher("./hojaServicioCliente/procesoServicio1.jsp").forward(request, response);
                 break;
                 
             case "seleccionarEquipo":
