@@ -63,6 +63,48 @@ public class ServicioDAO {
         
         return servicio;
     }
+    
+    public List obtenerServiciosBrindados(int codigoHojaServicio){
+        
+        List<Servicio> listaServiciosBrindados = new ArrayList<>();
+        List<Integer> codigosServiciosBrindados = new ArrayList<>();
+        
+        String sql = "select * from serviciosbrindados where Cod_HS="+codigoHojaServicio;
+        
+        try {
+            con = cn.getConnection();           
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                
+                int codigoServicioBrindado = rs.getInt("Cod_Serv");
+                codigosServiciosBrindados.add(codigoServicioBrindado);
+            }
+            for(int i : codigosServiciosBrindados){
+                listaServiciosBrindados.add(this.obtenerServicio(i));
+            }
+            
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return listaServiciosBrindados;
+    }
+    
+    public void eliminarServicioBrindado(int codigoServicioBrindado, int codigoHojaServicio) {
+        
+        String sql = "DELETE FROM serviciosbrindados WHERE Cod_Serv="+codigoServicioBrindado+" and Cod_HS="+codigoHojaServicio;
+        
+        try {
+            con = cn.getConnection();           
+            ps = con.prepareStatement(sql);
+            ps.executeUpdate();
+            
+        }catch (Exception e) {
+            e.printStackTrace();
+        } 
+    }
+    
     public void actualizarServicio(int codigoServicio, String nombreServicio, double precioServicio, String descripcionServicio){
         
         /* String sql = "UPDATE repuestos SET nombreRepuesto='"+nombreRepuesto+"', Desc_Rep='"+descripcionRepuesto+"',"

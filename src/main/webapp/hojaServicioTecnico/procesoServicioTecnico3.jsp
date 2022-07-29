@@ -116,7 +116,7 @@
                     <div class="tabla-der">
                         <form action="ControladorTecnico">
                             <label class="form-label" for="precioVisita">Ingresa el monto de la visita:</label>
-                            <input class="form-control" type="number" step="0.1" name="precioVisita" pattern="[0-9]+">
+                            <input class="form-control" type="number" step="0.1" name="precioVisita" pattern="[0-9]+" min="0">
 
                             <input type="hidden" name="codigoHojaServicio" value="${codigoHojaServicio}">
 

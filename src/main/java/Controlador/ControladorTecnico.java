@@ -87,12 +87,42 @@ public class ControladorTecnico extends HttpServlet {
             
             case "procesar":
                 int codigoHojaServicio = Integer.parseInt(request.getParameter("codigoHojaServicio"));
+                HojaServicio hojaServicio = hojaservicioDAO.obtenerHojaServicio(codigoHojaServicio);
+                List<Servicio> listaServiciosBrindados = servicioDAO.obtenerServiciosBrindados(codigoHojaServicio);
+                
+                sesion.setAttribute("codigoHojaServicio", codigoHojaServicio);
+                sesion.setAttribute("listaServiciosBrindados", listaServiciosBrindados);
+                request.getRequestDispatcher("./hojaServicioTecnico/prueba.jsp").forward(request, response);
+                break;
+                
+            case "agregarServicioBrindado":
+                codigoHojaServicio = Integer.parseInt(request.getParameter("codigoHojaServicio"));
                 List<Servicio> listaServicios = servicioDAO.listarServicios();
                 
                 sesion.setAttribute("codigoHojaServicio", codigoHojaServicio);
                 sesion.setAttribute("listaServicios", listaServicios);
                 request.getRequestDispatcher("./hojaServicioTecnico/procesoServicioTecnico1.jsp").forward(request, response);
-            break;
+                break;
+                
+            case "eliminarServicioBrindado":
+                codigoHojaServicio = Integer.parseInt(request.getParameter("codigoHojaServicio"));
+                int codigoServicioBrindado = Integer.parseInt(request.getParameter("codigoServicioBrindado"));
+                servicioDAO.eliminarServicioBrindado(codigoServicioBrindado, codigoHojaServicio);
+                
+                request.setAttribute("codigoHojaServicio", codigoHojaServicio);
+                request.getRequestDispatcher("ControladorTecnico?accion=procesar").forward(request, response);
+                break;
+                
+            /*
+            --------------------------FUNCIONAMIENTO ANTERIOR----------------------------------------------
+            case "procesar":
+                int codigoHojaServicio = Integer.parseInt(request.getParameter("codigoHojaServicio"));
+                List<Servicio> listaServicios = servicioDAO.listarServicios();
+                
+                sesion.setAttribute("codigoHojaServicio", codigoHojaServicio);
+                sesion.setAttribute("listaServicios", listaServicios);
+                request.getRequestDispatcher("./hojaServicioTecnico/procesoServicioTecnico1.jsp").forward(request, response);
+            break;*/
             case "agregarServicioCarrito":
                 
                 int codigoServicio = Integer.parseInt(request.getParameter("codigoServicio"));
@@ -197,7 +227,7 @@ public class ControladorTecnico extends HttpServlet {
                 codigoHojaServicio = Integer.parseInt(request.getParameter("codigoHojaServicio"));
                 double precioRepuestos = 0;
                 double precioServicios = 0;
-                HojaServicio hojaServicio = hojaservicioDAO.obtenerHojaServicio(codigoHojaServicio);
+                hojaServicio = hojaservicioDAO.obtenerHojaServicio(codigoHojaServicio);
                 
                 for(CarritoRepuesto i : carritoRepuestos){
                     precioRepuestos = precioRepuestos + i.getRepuesto().getPrecioRepuesto();
