@@ -72,6 +72,61 @@ public class HojaServicioDAO {
 
         }
     }
+    
+    public void registrarHojaServicioTecnico(int codigoUsuario, int codigoEquipo, String descripcionHojaServicio,
+             double total, String fecha, String hora, int codigoEstadoHojaServicio, List<Servicio> listaServicios) {
+
+        int codigoHojaServicio = 0;
+        double nuevoTotal = 0.00;
+
+        String sql = "insert into hojaservicio(Cod_Usuario,Cod_Equipo,Desc_HS,Cod_TipoServ,Total,PrecioVisita,Fecha,"
+                + "Hora,Cod_EstadoHS)values(?,?,?,?,?,?,?,?,?)";
+
+        try {
+            con = cn.getConnection();
+            ps = con.prepareStatement(sql);
+            //LLENAR PREPARED STATEMENT
+            ps.setInt(1, codigoUsuario);
+            ps.setInt(2, codigoEquipo);
+            ps.setString(3, descripcionHojaServicio);
+            ps.setInt(4, 2);
+            ps.setDouble(5, total);
+            ps.setString(6, null);
+            ps.setString(7, fecha);
+            ps.setString(8, hora);
+            ps.setInt(9, codigoEstadoHojaServicio);
+            ps.executeUpdate();
+
+            sql = "Select @@IDENTITY AS Cod_HS";
+            rs = ps.executeQuery(sql);
+            rs.next();
+            codigoHojaServicio = rs.getInt("Cod_HS");
+            rs.close();
+
+            for (Servicio servicio : listaServicios) {
+                sql = "insert into serviciosbrindados(Cod_Serv,Cod_HS,Precio)values(?,?,?)";
+                ps = con.prepareStatement(sql);
+                ps.setInt(1, servicio.getCodigoServicio());
+                ps.setInt(2, codigoHojaServicio);
+                ps.setDouble(3, servicio.getPrecioServicio());
+                ps.executeUpdate();
+            }
+
+            for (Servicio servicio : listaServicios) {
+                nuevoTotal = nuevoTotal + servicio.getPrecioServicio();
+            }
+
+            sql = "update hojaservicio SET Total=" + nuevoTotal + " WHERE Cod_HS=" + codigoHojaServicio;
+            try {
+                ps = con.prepareStatement(sql);
+                ps.executeUpdate();
+            } catch (Exception e3) {
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
 
     public EstadoHojaServicio obtenerEstadoHojaServicio(int codigoEstadoHojaServicio) {
         EstadoHojaServicio estadoHojaServicio = new EstadoHojaServicio();
@@ -242,11 +297,10 @@ public class HojaServicioDAO {
     }
     //***********METODO PARA FINALIZAR ATENCION TECNICO**********************
     public void finalizarAtencionTecnico(int codigoHojaServicio, double precioVisita, double totalFinal, int codigoEstado,
-            List<Servicio> carritoServicios, List<CarritoRepuesto> carritoRepuestos){
+            List<Servicio> carritoServicios, List<Repuesto> carritoRepuestos){
         
         this.asignarPresupuesto(codigoHojaServicio, precioVisita, totalFinal, codigoEstado);
         this.serviciosbrindados(carritoServicios, codigoHojaServicio);
-        this.repuestosHojaServicio(carritoRepuestos, codigoHojaServicio);
         
     }
     //***********MODIFICA TABLA HOJA SERVICIO********************************
@@ -293,18 +347,17 @@ public class HojaServicioDAO {
         
     }
     
-    public void repuestosHojaServicio(List<CarritoRepuesto> carritoRepuestos, int codigoHojaServicio){
+    public void repuestosHojaServicio(List<Repuesto> carritoRepuestos, int codigoHojaServicio){
         try{
             String sql = "insert into hs_rep(Cod_HS,Cod_Rep,Cantidad,Subtotal)values(?,?,?,?)";
             con = cn.getConnection();
             ps = con.prepareStatement(sql);
-            for (CarritoRepuesto repuesto : carritoRepuestos) {
+            for (Repuesto repuesto : carritoRepuestos) {
          
                 ps = con.prepareStatement(sql);
                 ps.setInt(1, codigoHojaServicio);
-                ps.setInt(2, repuesto.getRepuesto().getCodigoRepuesto());
-                ps.setInt(3, repuesto.getCantidad());
-                ps.setDouble(4, repuesto.getRepuesto().getPrecioRepuesto());
+                ps.setInt(2, repuesto.getCodigoRepuesto());
+                ps.setDouble(3, codigoHojaServicio/*MOMENTANEO*/);
                 ps.executeUpdate();
             }
         }catch(Exception e){

@@ -30,6 +30,7 @@ public class ControladorAdmin extends HttpServlet {
     TecnicoDAO tecnicoDAO = new TecnicoDAO();
     RepuestoDAO repuestoDAO = new RepuestoDAO();
     ServicioDAO servicioDAO = new ServicioDAO();
+    ClienteDAO clienteDAO = new ClienteDAO();
     HojaServicioDAO hojaServicioDAO = new HojaServicioDAO();
     int codigoTecnico = 0;
     
@@ -128,6 +129,17 @@ public class ControladorAdmin extends HttpServlet {
                 request.getRequestDispatcher("actualizarTecnico.jsp").forward(request, response);
                 break;
                 
+            case "modificarCliente":
+                
+            int codigoCliente = Integer.parseInt(request.getParameter("codigo"));
+                
+            usuario = usuarioDAO.obtenerUsuario(codigoCliente);
+                
+            sesion.setAttribute("usuario", usuario);
+                
+            request.getRequestDispatcher("actualizarCliente.jsp").forward(request, response);
+            break;
+                
             case "actualizar":
                 
                 int codigoUsuario = Integer.parseInt(request.getParameter("codigoUsuario"));
@@ -154,6 +166,32 @@ public class ControladorAdmin extends HttpServlet {
                 request.getRequestDispatcher("inicioAdmin.jsp").forward(request, response);
                 
                 break;
+            case "actualizarCliente":
+                
+                codigoUsuario = Integer.parseInt(request.getParameter("codigoUsuario"));
+                codigoPersona = Integer.parseInt(request.getParameter("codigoPersona"));
+                password = request.getParameter("password");
+                nombre = request.getParameter("nombre");
+                apellidoPaterno = request.getParameter("apellidoPaterno");
+                apellidoMaterno = request.getParameter("apellidoMaterno");
+                telefono = request.getParameter("telefono");
+                correo = request.getParameter("correo");
+                direccion = request.getParameter("direccion");
+                codigoDistrito = Integer.parseInt(request.getParameter("distrito"));
+                
+                
+                usuario = usuarioDAO.obtenerUsuario(codigoUsuario);
+                codigoDireccion = usuario.getPersona().getDireccion().getCodigoDireccion();
+                
+                descripcionDireccion = direccion.toString();
+                
+                
+                clienteDAO.actualizarDireccionCliente(codigoDireccion, descripcionDireccion, codigoDistrito);
+                clienteDAO.actualizarPersonaCliente(codigoPersona, nombre, apellidoPaterno, apellidoMaterno, telefono, correo);
+                clienteDAO.actualizarUsuarioCliente(codigoUsuario, password);
+                request.getRequestDispatcher("inicioAdmin.jsp").forward(request, response);
+                
+                break;    
                 
             case "eliminarTecnico":
                 
@@ -162,6 +200,14 @@ public class ControladorAdmin extends HttpServlet {
                 
                 request.getRequestDispatcher("ControladorAdmin?accion=listarTecnicos").forward(request, response);
                 break;
+                
+            case "eliminarCliente":
+                
+                codigoCliente = Integer.parseInt(request.getParameter("codigo"));
+                clienteDAO.eliminarCliente(codigoCliente);
+                
+                request.getRequestDispatcher("ControladorAdmin?accion=listarTecnicos").forward(request, response);
+            break;
                 
             case "agregarRepuesto":
                 
@@ -386,6 +432,15 @@ public class ControladorAdmin extends HttpServlet {
                 servicioDAO.eliminarServicio(codigoServicio);
                 
                 request.getRequestDispatcher("ControladorAdmin?accion=listarServicios").forward(request, response);
+            break;
+            
+            //P.6 MANTENIMIENTO CLIENTES
+            case "listarClientes":
+                
+                List<Usuario> listaClientes = clienteDAO.listarClientes();
+                sesion.setAttribute("listaClientes", listaClientes);
+                request.getRequestDispatcher("listarClientes.jsp").forward(request, response);
+                
             break;
         }
     }

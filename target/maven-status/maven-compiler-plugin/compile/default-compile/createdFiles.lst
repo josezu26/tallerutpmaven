@@ -1,5 +1,6 @@
 Controlador\ControladorSesion.class
 Modelo\Servicio.class
+Modelo\EstadoEquipo.class
 DAO\UsuarioDAO.class
 Modelo\TipoEquipo.class
 DAO\SesionDAO.class
