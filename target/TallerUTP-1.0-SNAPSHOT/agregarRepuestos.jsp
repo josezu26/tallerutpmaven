@@ -43,10 +43,10 @@
                         
                         <label class="form-label" for="nombreRepuesto">Nombre del repuesto: </label>
                         <input class="form-control" type="text" name="nombreRepuesto"
-                               required="" pattern="[A-Za-z0-9]+"><br>
+                               required="" pattern="[A-Za-z0-9 ]+"><br>
                         <label class="form-label" for="descripcionRepuesto">Descripcion del repuesto: </label>
                         <input class="form-control" type="text" name="descripcionRepuesto"
-                               required="" pattern="[A-Za-z0-9]+"><br>
+                               required="" pattern="[A-Za-z0-9 ]+"><br>
                         <label class="form-label" for="precioRepuesto">Precio del repuesto: </label>
                         <input class="form-control" type="number" name="precioRepuesto"
                                required="" step="0.1" min="0"><br>
