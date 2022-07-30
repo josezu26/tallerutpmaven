@@ -317,11 +317,14 @@ public class ControladorTecnico extends HttpServlet {
                 //int codigoEstadoAtencion =2;
                 double total = 0.00;
                 
+               
+                
                 Equipo equipo = equipoDAO.obtenerEquipo(codigoEquipo);
                 Usuario tecnico = usuarioDAO.obtenerUsuario(codigoTecnico);
                 hojaservicioDAO.registrarHojaServicioTecnico(tecnico.getCodigoUsuario(), equipo.getCodigoEquipo(), 
                 descripcionProblema, total, fechaHojaServicio, horaHojaServicio, codigoEstadoHS, carritoServicios);
                 
+                carritoServicios.clear();
                 request.getRequestDispatcher("inicioTecnico.jsp").forward(request, response);
             break;
         }
