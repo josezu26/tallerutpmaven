@@ -66,7 +66,7 @@
                                     <th scope="col">Hora</th>
                                     <th scope="col">Estado</th>
                                     <th scope="col">Total</th>
-                                    <th scope="col">Accion</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -80,7 +80,7 @@
                                     <td>${hojaServicio.getHoraHojaServicio() }</td>
                                     <td>${hojaServicio.getEstadoHojaServicio().getDescripcionEstadoHojaServicio() }</td>
                                     <td>${hojaServicio.getTotal()}</td>
-                                    <td><a href="ControladorAdmin?accion=procesar&codigoHojaServicio=${hojaServicio.getCodigoHojaServicio()}"><i class="fas fa-wrench"></i></a></td>
+                                    
                                 </tr>
                             </c:forEach>
                         </tbody>

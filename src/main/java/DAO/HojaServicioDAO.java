@@ -25,8 +25,8 @@ public class HojaServicioDAO {
         int codigoHojaServicio = 0;
         double nuevoTotal = 0.00;
 
-        String sql = "insert into hojaservicio(Cod_Usuario,Cod_Equipo,Desc_HS,Total,PrecioVisita,Fecha,"
-                + "Hora,Cod_EstadoHS)values(?,?,?,?,?,?,?,?)";
+        String sql = "insert into hojaservicio(Cod_Usuario,Cod_Equipo,Desc_HS,Cod_TipoServ,Total,PrecioVisita,Fecha,"
+                + "Hora,Cod_EstadoHS)values(?,?,?,?,?,?,?,?,?)";
 
         try {
             con = cn.getConnection();
@@ -35,11 +35,12 @@ public class HojaServicioDAO {
             ps.setInt(1, codigoUsuario);
             ps.setInt(2, codigoEquipo);
             ps.setString(3, descripcionHojaServicio);
-            ps.setDouble(4, total);
-            ps.setString(5, null);
-            ps.setString(6, fecha);
-            ps.setString(7, hora);
-            ps.setInt(8, codigoEstadoHojaServicio);
+            ps.setInt(4, 1);
+            ps.setDouble(5, total);
+            ps.setString(6, null);
+            ps.setString(7, fecha);
+            ps.setString(8, hora);
+            ps.setInt(9, codigoEstadoHojaServicio);
             ps.executeUpdate();
 
             sql = "Select @@IDENTITY AS Cod_HS";

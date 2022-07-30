@@ -127,4 +127,32 @@ public class RepuestoDAO {
         
     }
     
+    public List obtenerRepuestosBrindados(int codigoHojaServicio){
+        
+        List<Repuesto> listaRepuestosBrindados = new ArrayList<>();
+        List<Integer> codigosRepuestosBrindados = new ArrayList<>();
+        
+        String sql = "select * from hs_rep where Cod_HS="+codigoHojaServicio;
+        
+        try {
+            con = cn.getConnection();           
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                
+                int codigoServicioBrindado = rs.getInt("Cod_Rep");
+                codigosRepuestosBrindados.add(codigoServicioBrindado);
+            }
+            for(int i : codigosRepuestosBrindados){
+                listaRepuestosBrindados.add(this.obtenerRepuesto(i));
+            }
+            
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return listaRepuestosBrindados;
+    }
+    
+    
 }
